@@ -33,7 +33,7 @@ for the application code, and the `Source/MapReduce` folder for the MrSim code.
 ## Who maintains LTLValidator?
 
 LTLValidator has been developed and is currently maintained by
-[Maxime Soucy-Boivin] (http://www.lif.uqac.ca), mastery assistant researcher 
+[Maxime Soucy-Boivin] (http://lif.uqac.ca), mastery assistant researcher 
 of Sylvain Hallé,
 and 
 [Sylvain Hallé](http://www.leduotang.com/sylvain), assistant professor at
