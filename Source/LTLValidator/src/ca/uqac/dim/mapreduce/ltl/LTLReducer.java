@@ -54,8 +54,6 @@ public class LTLReducer implements Reducer<Operator,LTLTupleValue>
 			reduce(out, (OperatorImplies) key, in);
 		else if (key.getClass() == OperatorNot.class)
 			reduce(out, (OperatorNot) key, in);
-		else if (key.getClass() == OperatorNot.class)
-			reduce(out, (OperatorNot) key, in);
 		else if (key.getClass() == OperatorF.class)
 			reduce(out, (OperatorF) key, in);
 		else if (key.getClass() == OperatorG.class)
