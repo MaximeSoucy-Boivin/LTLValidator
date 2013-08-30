@@ -17,8 +17,11 @@
  */
 package ca.uqac.dim.mapreduce.ltl;
 import java.util.Set;
+
 import ca.uqac.dim.mapreduce.*;
+
 import org.apache.commons.cli.*;
+
 import java.io.File;
 import java.io.PrintStream;
 
@@ -117,11 +120,16 @@ public class ParaLTLValidation
 		for (int i = 0; i < max_loops; i++)
 		{
 			print(System.out, "Loop " + i, 2);
-			LTLParallelWorkflow w = new LTLParallelWorkflow(new LTLMapper(subformulas), new LTLReducer(subformulas, trace_len), loop_collector);
+			LTLParallelWorkflow w = new LTLParallelWorkflow(new LTLMapper(subformulas), new LTLReducer(subformulas, trace_len), loop_collector, new ResourceManager<Operator, 
+					LTLTupleValue>(100), new ResourceManager<Operator, LTLTupleValue>(400));
 			loop_collector = w.run();
 			max_tuples_total += w.getMaxTuples();
 			total_tuples_total += w.getTotalTuples();
-			print(System.out, loop_collector.toString(), 3);
+			
+			if (m_verbosity >= 3)
+			{
+				print(System.out, loop_collector.toString(), 3);
+			}
 		}
 		boolean result = getVerdict(loop_collector, property);
 		long time_end = System.nanoTime();
