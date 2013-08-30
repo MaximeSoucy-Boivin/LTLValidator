@@ -122,7 +122,12 @@ public class LTLValidation
 			loop_collector = w.run();
 			max_tuples_total += w.getMaxTuples();
 			total_tuples_total += w.getTotalTuples();
-			print(System.out, loop_collector.toString(), 3);
+			
+			if (m_verbosity >= 3)
+			{
+				print(System.out, loop_collector.toString(), 3);
+			}
+			
 		}
 		boolean result = getVerdict(loop_collector, property);
 		long time_end = System.nanoTime();
