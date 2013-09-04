@@ -77,7 +77,7 @@ public abstract class UnaryOperator extends Operator
 	
 	public final boolean isAtom()
 	{
-		return false;
+		return false; 
 	}
 	
 	public int getDepth()

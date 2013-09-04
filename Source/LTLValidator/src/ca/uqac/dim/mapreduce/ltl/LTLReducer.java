@@ -43,6 +43,8 @@ public class LTLReducer implements Reducer<Operator,LTLTupleValue>
 	public void reduce(OutCollector<Operator, LTLTupleValue> out, Operator key,
 			InCollector<Operator, LTLTupleValue> in)
 	{
+		//System.out.println("Reducer");
+		//System.out.println(key.toString());
 		// Make sure someone has not started enumerating the input contents
 		in.rewind();
 		// Evaluate according to the operator standing for the key
@@ -54,6 +56,8 @@ public class LTLReducer implements Reducer<Operator,LTLTupleValue>
 			reduce(out, (OperatorImplies) key, in);
 		else if (key.getClass() == OperatorNot.class)
 			reduce(out, (OperatorNot) key, in);
+		/*else if (key.getClass() == OperatorNot.class)
+			reduce(out, (OperatorNot) key, in);*/
 		else if (key.getClass() == OperatorF.class)
 			reduce(out, (OperatorF) key, in);
 		else if (key.getClass() == OperatorG.class)

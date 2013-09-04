@@ -24,7 +24,7 @@ public class Edoc2012Presets
 			return property4();
 		default:
 				return null;
-		}
+		} 
 	}
 	
 	/**

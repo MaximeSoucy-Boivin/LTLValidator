@@ -50,6 +50,7 @@ public class LTLMapper implements Mapper<Operator,LTLTupleValue>
 	public void map(OutCollector<Operator, LTLTupleValue> c,
 			Tuple<Operator, LTLTupleValue> t)
 	{
+		//System.out.println("Mapper");
 		LTLTupleValue v = t.getValue();
 		Operator k = t.getKey();
 		if (v.getIteration() < k.getDepth())
