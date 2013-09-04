@@ -1,6 +1,6 @@
 /*
     LTL trace validation using MapReduce
-    Copyright (C) 2012 Sylvain Hallé
+    Copyright (C) 2012 Sylvain Hallé 
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,10 +15,14 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package ca.uqac.dim.mapreduce.ltl;
 import java.util.Set;
+
 import ca.uqac.dim.mapreduce.*;
+
 import org.apache.commons.cli.*;
+
 import java.io.File;
 import java.io.PrintStream;
 
@@ -32,6 +36,7 @@ public class LTLValidation
 	private static final String app_string = "Event trace validator using MapReduce\n(C) 2012 Sylvain Hallé\n";
 	private static final String app_name = "ltlmapreduce [options]";
 	private static final String app_version = "1.0";
+	public static final int ERR_ARGUMENTS = 4;
 	
 	private static int m_verbosity = 0;
 
@@ -53,6 +58,8 @@ public class LTLValidation
 		options.addOption(opt);
 		opt = OptionBuilder.withArgName("x").hasArg().withDescription("Set verbosity level to x (default: 0 = quiet)").create("v");
 		options.addOption(opt);
+		opt = OptionBuilder.withArgName("ParserType").hasArg().withDescription("Parser type (Dom or Sax)").create("t");
+		options.addOption(opt);
 		CommandLine c_line = parseCommandLine(options, args);
 		if (!c_line.hasOption("p") || !c_line.hasOption("i") | c_line.hasOption("h"))
 		{
@@ -64,6 +71,18 @@ public class LTLValidation
 		String trace_filename = c_line.getOptionValue("i");
 		String trace_format = getExtension(trace_filename);
 		String property_str = c_line.getOptionValue("p");
+		String ParserType = "";
+		
+		if (c_line.hasOption("t"))
+		{
+			ParserType = c_line.getOptionValue("t");
+		}
+		else
+		{
+		    	System.err.println("No Parser Type in Arguments");
+		        System.exit(ERR_ARGUMENTS);
+		}
+		
 		if (c_line.hasOption("v"))
 			m_verbosity = Integer.parseInt(c_line.getOptionValue("v"));
 
@@ -101,7 +120,18 @@ public class LTLValidation
 			}
 			else if (trace_format.compareToIgnoreCase(".xml") == 0)
 			{
-				initial_collector = new XmlTraceCollector(in_file, subformulas);
+				if(ParserType.equals("Dom"))
+				{
+					initial_collector = new XmlDomTraceCollector(in_file, subformulas);
+				}
+				else if(ParserType.equals("Sax"))
+				{
+					initial_collector = new XmlSaxTraceCollector(in_file, subformulas);
+				}
+				else
+				{
+					initial_collector = new XmlSaxTraceCollector(in_file, subformulas);
+				}
 			}
 		}
 		if (initial_collector == null)

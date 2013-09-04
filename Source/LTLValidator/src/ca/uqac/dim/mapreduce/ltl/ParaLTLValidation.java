@@ -15,6 +15,10 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+/*
+ * This file was updated by Maxime Soucy-Boivin Copyright (C) 2013
+ */
 package ca.uqac.dim.mapreduce.ltl;
 import java.util.Set;
 
@@ -26,8 +30,8 @@ import java.io.File;
 import java.io.PrintStream;
 
 /**
- * Main program for LTL trace validation using MapReduce.
- * @author sylvain
+ * Main program for Parallel LTL trace validation using MapReduce.
+ * @author Maxime Soucy-Boivin
  *
  */
 public class ParaLTLValidation
@@ -35,6 +39,7 @@ public class ParaLTLValidation
 	private static final String app_string = "Event trace validator using MapReduce\n(C) 2012 Sylvain Hallé\n";
 	private static final String app_name = "ltlmapreduce [options]";
 	private static final String app_version = "1.0";
+	public static final int ERR_ARGUMENTS = 4;
 	
 	private static int m_verbosity = 0;
 
@@ -55,6 +60,8 @@ public class ParaLTLValidation
 		options.addOption(opt);
 		opt = OptionBuilder.withArgName("x").hasArg().withDescription("Set verbosity level to x (default: 0 = quiet)").create("v");
 		options.addOption(opt);
+		opt = OptionBuilder.withArgName("ParserType").hasArg().withDescription("Parser type (Dom or Sax)").create("t");
+		options.addOption(opt);
 		CommandLine c_line = parseCommandLine(options, args);
 		if (!c_line.hasOption("p") || !c_line.hasOption("i") | c_line.hasOption("h"))
 		{
@@ -66,6 +73,18 @@ public class ParaLTLValidation
 		String trace_filename = c_line.getOptionValue("i");
 		String trace_format = getExtension(trace_filename);
 		String property_str = c_line.getOptionValue("p");
+		String ParserType = "";
+		
+		if (c_line.hasOption("t"))
+		{
+			ParserType = c_line.getOptionValue("t");
+		}
+		else
+		{
+		    	System.err.println("No Parser Type in Arguments");
+		        System.exit(ERR_ARGUMENTS);
+		}
+		 
 		if (c_line.hasOption("v"))
 			m_verbosity = Integer.parseInt(c_line.getOptionValue("v"));
 
@@ -103,7 +122,18 @@ public class ParaLTLValidation
 			}
 			else if (trace_format.compareToIgnoreCase(".xml") == 0)
 			{
-				initial_collector = new XmlTraceCollector(in_file, subformulas);
+				if(ParserType.equals("Dom"))
+				{
+					initial_collector = new XmlDomTraceCollector(in_file, subformulas);
+				}
+				else if(ParserType.equals("Sax"))
+				{
+					initial_collector = new XmlSaxTraceCollector(in_file, subformulas);
+				}
+				else
+				{
+					initial_collector = new XmlSaxTraceCollector(in_file, subformulas);
+				}
 			}
 		}
 		if (initial_collector == null)
