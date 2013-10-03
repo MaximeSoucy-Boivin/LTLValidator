@@ -24,6 +24,7 @@ import ca.uqac.dim.mapreduce.*;
 import org.apache.commons.cli.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
 /**
@@ -60,7 +61,29 @@ public class LTLValidation
 		options.addOption(opt);
 		opt = OptionBuilder.withArgName("ParserType").hasArg().withDescription("Parser type (Dom or Sax)").create("t");
 		options.addOption(opt);
+		opt = OptionBuilder.withLongOpt("redirection").withArgName("x").hasArg().withDescription("Set the redirection file for the System.out").create("r");
+	    options.addOption(opt);
 		CommandLine c_line = parseCommandLine(options, args);
+		
+		String redirectionFile = "";
+		
+		 //Contains a redirection file for the output
+		 if(c_line.hasOption("redirection"))
+		 {
+				try 
+				{
+					redirectionFile = c_line.getOptionValue("redirection");
+			    	PrintStream ps;
+					ps = new PrintStream(redirectionFile);
+					System.setOut(ps);
+				} 
+				catch (FileNotFoundException e) 
+				{
+					System.out.println("Redirection error !!!");
+					e.printStackTrace();
+				} 
+		}
+		 
 		if (!c_line.hasOption("p") || !c_line.hasOption("i") | c_line.hasOption("h"))
 		{
 			help_formatter.printHelp(app_name, options);

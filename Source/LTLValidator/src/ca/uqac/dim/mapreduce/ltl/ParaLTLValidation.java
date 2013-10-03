@@ -27,6 +27,7 @@ import ca.uqac.dim.mapreduce.*;
 import org.apache.commons.cli.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
 /**
@@ -62,7 +63,33 @@ public class ParaLTLValidation
 		options.addOption(opt);
 		opt = OptionBuilder.withArgName("ParserType").hasArg().withDescription("Parser type (Dom or Sax)").create("t");
 		options.addOption(opt);
+		opt = OptionBuilder.withLongOpt("redirection").withArgName("x").hasArg().withDescription("Set the redirection file for the System.out").create("r");
+	    options.addOption(opt);
+	    opt = OptionBuilder.withLongOpt("mapper").withArgName("x").hasArg().withDescription("Set the number of mapper").create("m");
+	    options.addOption(opt);
+	    opt = OptionBuilder.withLongOpt("reducer").withArgName("x").hasArg().withDescription("Set the number of reducer").create("n");
+	    options.addOption(opt);
 		CommandLine c_line = parseCommandLine(options, args);
+		
+		String redirectionFile = "";
+		
+		//Contains a redirection file for the output
+		if(c_line.hasOption("redirection"))
+		{
+				try 
+				{
+					redirectionFile = c_line.getOptionValue("redirection");
+			    	PrintStream ps;
+					ps = new PrintStream(redirectionFile);
+					System.setOut(ps);
+				} 
+				catch (FileNotFoundException e) 
+				{
+					System.out.println("Redirection error !!!");
+					e.printStackTrace();
+				} 
+		}
+		 
 		if (!c_line.hasOption("p") || !c_line.hasOption("i") | c_line.hasOption("h"))
 		{
 			help_formatter.printHelp(app_name, options);
@@ -74,15 +101,40 @@ public class ParaLTLValidation
 		String trace_format = getExtension(trace_filename);
 		String property_str = c_line.getOptionValue("p");
 		String ParserType = "";
+		int MapperNum = 0;
+		int ReducerNum = 0;
 		
+		//Contains a parser type
 		if (c_line.hasOption("t"))
 		{
 			ParserType = c_line.getOptionValue("t");
 		}
 		else
 		{
-		    	System.err.println("No Parser Type in Arguments");
-		        System.exit(ERR_ARGUMENTS);
+		    System.err.println("No Parser Type in Arguments");
+		    System.exit(ERR_ARGUMENTS);
+		}
+		
+		//Contains a mapper number
+		if (c_line.hasOption("m"))
+		{
+			MapperNum =  Integer.parseInt(c_line.getOptionValue("m"));
+		}
+		else
+		{
+		    System.err.println("No Mapper Number in Arguments");
+		    System.exit(ERR_ARGUMENTS);
+		}
+		
+		//Contains a reducer number
+		if (c_line.hasOption("n"))
+		{
+			ReducerNum =  Integer.parseInt(c_line.getOptionValue("n"));
+		}
+		else
+		{
+			System.err.println("No Reducer Number in Arguments");
+			System.exit(ERR_ARGUMENTS);
 		}
 		 
 		if (c_line.hasOption("v"))
@@ -151,7 +203,7 @@ public class ParaLTLValidation
 		{
 			print(System.out, "Loop " + i, 2);
 			LTLParallelWorkflow w = new LTLParallelWorkflow(new LTLMapper(subformulas), new LTLReducer(subformulas, trace_len), loop_collector, new ResourceManager<Operator, 
-					LTLTupleValue>(100), new ResourceManager<Operator, LTLTupleValue>(400));
+					LTLTupleValue>(MapperNum), new ResourceManager<Operator, LTLTupleValue>(ReducerNum));
 			loop_collector = w.run();
 			max_tuples_total += w.getMaxTuples();
 			total_tuples_total += w.getTotalTuples();
