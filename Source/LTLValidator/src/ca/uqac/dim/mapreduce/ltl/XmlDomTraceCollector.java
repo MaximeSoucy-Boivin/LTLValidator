@@ -89,6 +89,12 @@ public class XmlDomTraceCollector extends TraceCollector
 	{
 		m_traceLength = 0;
 		
+		//TODO
+		HashSet<String> symbols = new HashSet<String>();
+		for (Atom a : atoms)
+			symbols.add(a.getSymbol());
+		
+		
 		NodeList nl = doc.getElementsByTagName("Event");
 		m_traceLength = nl.getLength();
 		for (int i = 0; i < m_traceLength; i++)
