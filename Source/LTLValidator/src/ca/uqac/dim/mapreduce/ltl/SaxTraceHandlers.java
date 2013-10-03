@@ -244,12 +244,15 @@ public class SaxTraceHandlers extends DefaultHandler
 						//Checks if the variable has already been processed
 						while(pos < lengthVarDone)
 						{
+							m_parts = listVarDone.get(pos).split("/");
+							
 							//If it's the case
-							if(listVarDone.get(pos).equals(nameVar))
+							if((m_parts[0].equals(nameVar)) && (m_parts[1].equals(value)))
 							{
 								pos = lengthVarDone;
 								VarDone = true;
 							}
+							pos++;
 						}
 						
 						//Adds the variable only once to the TraceCollector
@@ -258,7 +261,7 @@ public class SaxTraceHandlers extends DefaultHandler
 							LTLTupleValue v = new LTLTupleValue(a, ptrTraceCol.getTraceLength(), 0);
 							LTLTuple t = new LTLTuple(a, v);
 							ptrTraceCol.collect(t);
-							listVarDone.add(nameVar);
+							listVarDone.add(nameVar + "/" + value);
 						}//if VarDone
 					}// if
 				}// for Atom
